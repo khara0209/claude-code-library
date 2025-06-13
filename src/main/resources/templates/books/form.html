@@ -78,7 +78,9 @@
                             
                             <div class="mb-3">
                                 <label for="publishedYear" class="form-label">出版年</label>
-                                <input type="number" class="form-control" id="publishedYear" th:field="*{publishedYear}" min="1900" max="2100">
+                                <input type="date" class="form-control" id="publishedYear" name="publishedYearDate" min="1900-01-01" max="2100-12-31">
+                                <input type="hidden" th:field="*{publishedYear}" id="publishedYearHidden">
+                                <small class="form-text text-muted">日付を選択すると、その年が出版年として設定されます</small>
                             </div>
                             
                             <div class="mb-3">
@@ -120,5 +122,28 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('publishedYear');
+            const hiddenInput = document.getElementById('publishedYearHidden');
+            
+            // Initialize date picker with existing year value
+            const existingYear = hiddenInput.value;
+            if (existingYear && existingYear !== '') {
+                dateInput.value = existingYear + '-01-01';
+            }
+            
+            // Update hidden field when date changes
+            dateInput.addEventListener('change', function() {
+                if (this.value) {
+                    const selectedDate = new Date(this.value);
+                    const year = selectedDate.getFullYear();
+                    hiddenInput.value = year;
+                } else {
+                    hiddenInput.value = '';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
