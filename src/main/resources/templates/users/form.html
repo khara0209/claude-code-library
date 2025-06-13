@@ -51,6 +51,12 @@
                         <h4 th:text="${user.id != null ? 'ユーザー編集' : 'ユーザー新規登録'}">ユーザー登録</h4>
                     </div>
                     <div class="card-body">
+                        <!-- Error message display -->
+                        <div th:if="${error}" class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <span th:text="${error}">エラーメッセージ</span>
+                        </div>
+                        
                         <form th:action="@{/users}" th:object="${user}" method="post">
                             <input type="hidden" th:field="*{id}">
                             <input type="hidden" th:field="*{createdAt}">
@@ -63,7 +69,12 @@
                             
                             <div class="mb-3">
                                 <label for="email" class="form-label">メールアドレス <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" 
+                                       th:class="${error != null && #strings.contains(error, 'メールアドレス')} ? 'form-control is-invalid' : 'form-control'" 
+                                       required>
+                                <div th:if="${error != null && #strings.contains(error, 'メールアドレス')}" class="invalid-feedback">
+                                    <span th:text="${error}">メールアドレスエラー</span>
+                                </div>
                             </div>
                             
                             <div class="mb-3">

@@ -47,17 +47,26 @@ class UserController(private val userService: UserService) {
     }
     
     @PostMapping
-    fun save(@ModelAttribute user: User, redirectAttributes: RedirectAttributes): String {
+    fun save(@ModelAttribute user: User, redirectAttributes: RedirectAttributes, model: Model): String {
         try {
             logger.info("ユーザー保存開始: $user")
             userService.save(user)
             logger.info("ユーザー保存成功: ID=${user.id}")
             redirectAttributes.addFlashAttribute("message", "ユーザーを保存しました")
+            return "redirect:/users"
         } catch (e: Exception) {
             logger.error("ユーザー保存エラー: ${e.message}", e)
+            
+            // Email uniqueness error handling
+            if (e.message?.contains("already registered") == true) {
+                model.addAttribute("error", "このメールアドレスは既に登録されています")
+                model.addAttribute("user", user)
+                return "users/form"
+            }
+            
             redirectAttributes.addFlashAttribute("error", "ユーザーの保存に失敗しました: ${e.message}")
+            return "redirect:/users"
         }
-        return "redirect:/users"
     }
     
     @PostMapping("/{id}/delete")
