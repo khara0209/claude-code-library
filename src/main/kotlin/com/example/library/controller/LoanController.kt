@@ -36,9 +36,15 @@ class LoanController(
     }
     
     @GetMapping("/new")
-    fun newLoan(model: Model): String {
+    fun newLoan(
+        @RequestParam(required = false) bookId: Long?,
+        @RequestParam(required = false) userId: Long?,
+        model: Model
+    ): String {
         model.addAttribute("availableBooks", bookService.findAvailableBooks())
         model.addAttribute("users", userService.findAll())
+        model.addAttribute("preselectedBookId", bookId)
+        model.addAttribute("preselectedUserId", userId)
         return "loans/form"
     }
     

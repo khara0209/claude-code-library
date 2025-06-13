@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザー詳細 - 図書館管理システム</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-book"></i> 図書館管理システム
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house"></i> ホーム
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/books">
+                            <i class="bi bi-book"></i> 書籍管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/users">
+                            <i class="bi bi-people"></i> ユーザー管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/loans">
+                            <i class="bi bi-arrow-left-right"></i> 貸し出し管理
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">ユーザー詳細</h4>
+                        <div>
+                            <a th:href="@{/users/{id}/edit(id=${user.id})}" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil"></i> 編集
+                            </a>
+                            <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post" class="d-inline ms-1"
+                                  onsubmit="return confirm('本当に削除しますか？')">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i> 削除
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 th:text="${user.name}" class="card-title mb-3">ユーザー名</h5>
+                                
+                                <div class="mb-3">
+                                    <strong>メールアドレス:</strong>
+                                    <span th:text="${user.email}">メールアドレス</span>
+                                </div>
+                                
+                                <div class="mb-3" th:if="${user.phone}">
+                                    <strong>電話番号:</strong>
+                                    <span th:text="${user.phone}">電話番号</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <strong>登録日:</strong>
+                                    <span th:text="${#temporals.format(user.createdAt, 'yyyy/MM/dd HH:mm')}">登録日時</span>
+                                </div>
+                                
+                                <div class="mb-3" th:if="${user.updatedAt != user.createdAt}">
+                                    <strong>更新日:</strong>
+                                    <span th:text="${#temporals.format(user.updatedAt, 'yyyy/MM/dd HH:mm')}">更新日時</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 借用履歴カード（実装時にコントローラーでデータを追加） -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="bi bi-clock-history"></i> 借用履歴
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info" role="alert">
+                            <i class="bi bi-info-circle"></i>
+                            借用履歴機能は今後のアップデートで実装予定です。
+                            現在は<a href="/loans" class="alert-link">貸し出し管理</a>ページで全体の記録を確認できます。
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">クイックアクション</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="/loans/new" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> このユーザーに貸し出し
+                            </a>
+                            <a href="/users" class="btn btn-outline-primary">
+                                <i class="bi bi-arrow-left"></i> ユーザー一覧に戻る
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">統計情報</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="border-end">
+                                    <h4 class="text-primary mb-1">-</h4>
+                                    <small class="text-muted">総借用数</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h4 class="text-warning mb-1">-</h4>
+                                <small class="text-muted">現在借用中</small>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i>
+                            詳細統計は今後のアップデートで追加予定
+                        </small>
+                    </div>
+                </div>
+                
+                <!-- ユーザーIDをリンクパラメータとして設定するJavaScript -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const loanLink = document.querySelector('a[href="/loans/new"]');
+                        if (loanLink) {
+                            const userId = /*[[${user.id}]]*/ '';
+                            loanLink.href = `/loans/new?userId=${userId}`;
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
