@@ -163,15 +163,3 @@ src/
 ```bash
 ./gradlew build
 ```
-
-## ライセンス
-
-このプロジェクトはMITライセンスの下で公開されています。
-
-## 貢献
-
-バグ報告や機能追加の提案は、GitHubのIssueまでお願いします。
-
-## 作者
-
-Claude Code Library Project
