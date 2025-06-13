@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>貸し出し一覧 - 図書館管理システム</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-book"></i> 図書館管理システム
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house"></i> ホーム
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/books">
+                            <i class="bi bi-book"></i> 書籍管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users">
+                            <i class="bi bi-people"></i> ユーザー管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/loans">
+                            <i class="bi bi-arrow-left-right"></i> 貸し出し管理
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${message}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>貸し出し一覧</h2>
+            <a href="/loans/new" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> 新規貸し出し
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>書籍</th>
+                                <th>利用者</th>
+                                <th>貸出日</th>
+                                <th>返却予定日</th>
+                                <th>返却日</th>
+                                <th>状態</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="loanDetail : ${loansWithDetails}">
+                                <td th:text="${loanDetail.loan.id}"></td>
+                                <td th:text="${loanDetail.book?.title}"></td>
+                                <td th:text="${loanDetail.user?.name}"></td>
+                                <td th:text="${#temporals.format(loanDetail.loan.loanDate, 'yyyy/MM/dd')}"></td>
+                                <td th:text="${#temporals.format(loanDetail.loan.dueDate, 'yyyy/MM/dd')}"></td>
+                                <td th:text="${loanDetail.loan.returnDate != null ? #temporals.format(loanDetail.loan.returnDate, 'yyyy/MM/dd') : '-'}"></td>
+                                <td>
+                                    <span th:if="${loanDetail.loan.status == 'ACTIVE'}" class="badge bg-warning">貸出中</span>
+                                    <span th:if="${loanDetail.loan.status == 'RETURNED'}" class="badge bg-success">返却済み</span>
+                                </td>
+                                <td>
+                                    <form th:if="${loanDetail.loan.status == 'ACTIVE'}" 
+                                          th:action="@{/loans/{id}/return(id=${loanDetail.loan.id})}" 
+                                          method="post" class="d-inline"
+                                          onsubmit="return confirm('返却処理を実行しますか？')">
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="bi bi-arrow-left"></i> 返却
+                                        </button>
+                                    </form>
+                                    <span th:if="${loanDetail.loan.status == 'RETURNED'}" class="text-muted">完了</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${loansWithDetails.isEmpty()}">
+                                <td colspan="8" class="text-center">貸し出し記録がありません</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
