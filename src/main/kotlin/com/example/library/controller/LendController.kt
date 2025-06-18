@@ -1,7 +1,7 @@
 package com.example.library.controller
 
 import com.example.library.service.BookService
-import com.example.library.service.LoanService
+import com.example.library.service.LendService
 import com.example.library.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller
@@ -10,33 +10,33 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
-@RequestMapping("/loans")
-class LoanController(
-    private val loanService: LoanService,
+@RequestMapping("/lends")
+class LendController(
+    private val lendService: LendService,
     private val bookService: BookService,
     private val userService: UserService
 ) {
     
-    private val logger = LoggerFactory.getLogger(LoanController::class.java)
+    private val logger = LoggerFactory.getLogger(LendController::class.java)
     
     @GetMapping
     fun list(model: Model): String {
-        val loans = loanService.findAll()
-        val loansWithDetails = loans.map { loan ->
-            val book = bookService.findById(loan.bookId)
-            val user = userService.findById(loan.userId)
+        val lends = lendService.findAll()
+        val lendsWithDetails = lends.map { lend ->
+            val book = bookService.findById(lend.bookId)
+            val user = userService.findById(lend.userId)
             mapOf(
-                "loan" to loan,
+                "lend" to lend,
                 "book" to book,
                 "user" to user
             )
         }
-        model.addAttribute("loansWithDetails", loansWithDetails)
-        return "loans/list"
+        model.addAttribute("lendsWithDetails", lendsWithDetails)
+        return "lends/list"
     }
     
     @GetMapping("/new")
-    fun newLoan(
+    fun newLend(
         @RequestParam(required = false) bookId: Long?,
         @RequestParam(required = false) userId: Long?,
         model: Model
@@ -45,21 +45,21 @@ class LoanController(
         model.addAttribute("users", userService.findAll())
         model.addAttribute("preselectedBookId", bookId)
         model.addAttribute("preselectedUserId", userId)
-        return "loans/form"
+        return "lends/form"
     }
     
     @PostMapping
     fun save(
         @RequestParam bookId: Long,
         @RequestParam userId: Long,
-        @RequestParam(defaultValue = "14") loanPeriodDays: Int,
+        @RequestParam(defaultValue = "14") lendPeriodDays: Int,
         redirectAttributes: RedirectAttributes
     ): String {
         try {
-            logger.info("貸し出し処理開始: bookId=$bookId, userId=$userId, period=$loanPeriodDays")
-            val loan = loanService.loanBook(bookId, userId, loanPeriodDays)
-            if (loan != null) {
-                logger.info("貸し出し成功: loanId=${loan.id}")
+            logger.info("貸し出し処理開始: bookId=$bookId, userId=$userId, period=$lendPeriodDays")
+            val lend = lendService.lendBook(bookId, userId, lendPeriodDays)
+            if (lend != null) {
+                logger.info("貸し出し成功: lendId=${lend.id}")
                 redirectAttributes.addFlashAttribute("message", "書籍を貸し出しました")
             } else {
                 logger.warn("貸し出し失敗: 書籍が利用できません bookId=$bookId")
@@ -69,24 +69,24 @@ class LoanController(
             logger.error("貸し出しエラー: ${e.message}", e)
             redirectAttributes.addFlashAttribute("error", "貸し出しに失敗しました: ${e.message}")
         }
-        return "redirect:/loans"
+        return "redirect:/lends"
     }
     
     @PostMapping("/{id}/return")
     fun returnBook(@PathVariable id: Long, redirectAttributes: RedirectAttributes): String {
         try {
-            logger.info("返却処理開始: loanId=$id")
-            if (loanService.returnBook(id)) {
-                logger.info("返却成功: loanId=$id")
+            logger.info("返却処理開始: lendId=$id")
+            if (lendService.returnBook(id)) {
+                logger.info("返却成功: lendId=$id")
                 redirectAttributes.addFlashAttribute("message", "書籍を返却しました")
             } else {
-                logger.warn("返却失敗: loanId=$id")
+                logger.warn("返却失敗: lendId=$id")
                 redirectAttributes.addFlashAttribute("error", "返却に失敗しました")
             }
         } catch (e: Exception) {
             logger.error("返却エラー: ${e.message}", e)
             redirectAttributes.addFlashAttribute("error", "返却に失敗しました: ${e.message}")
         }
-        return "redirect:/loans"
+        return "redirect:/lends"
     }
 }
