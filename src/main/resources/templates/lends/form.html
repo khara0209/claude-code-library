@@ -34,7 +34,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/loans">
+                        <a class="nav-link active" href="/lends">
                             <i class="bi bi-arrow-left-right"></i> 貸し出し管理
                         </a>
                     </li>
@@ -51,7 +51,7 @@
                         <h4>新規貸し出し</h4>
                     </div>
                     <div class="card-body">
-                        <form th:action="@{/loans}" method="post">
+                        <form th:action="@{/lends}" method="post">
                             <div class="mb-3">
                                 <label for="bookId" class="form-label">書籍 <span class="text-danger">*</span></label>
                                 <select class="form-select" id="bookId" name="bookId" required>
@@ -77,8 +77,8 @@
                             </div>
                             
                             <div class="mb-3">
-                                <label for="loanPeriodDays" class="form-label">貸出期間（日数）</label>
-                                <select class="form-select" id="loanPeriodDays" name="loanPeriodDays">
+                                <label for="lendPeriodDays" class="form-label">貸出期間（日数）</label>
+                                <select class="form-select" id="lendPeriodDays" name="lendPeriodDays">
                                     <option value="7">7日間</option>
                                     <option value="14" selected>14日間</option>
                                     <option value="21">21日間</option>
@@ -87,7 +87,7 @@
                             </div>
                             
                             <div class="d-flex justify-content-between">
-                                <a href="/loans" class="btn btn-secondary">
+                                <a href="/lends" class="btn btn-secondary">
                                     <i class="bi bi-arrow-left"></i> 戻る
                                 </a>
                                 <button type="submit" class="btn btn-primary">

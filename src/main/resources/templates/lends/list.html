@@ -34,7 +34,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/loans">
+                        <a class="nav-link active" href="/lends">
                             <i class="bi bi-arrow-left-right"></i> 貸し出し管理
                         </a>
                     </li>
@@ -55,7 +55,7 @@
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>貸し出し一覧</h2>
-            <a href="/loans/new" class="btn btn-primary">
+            <a href="/lends/new" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> 新規貸し出し
             </a>
         </div>
@@ -77,30 +77,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="loanDetail : ${loansWithDetails}">
-                                <td th:text="${loanDetail.loan.id}"></td>
-                                <td th:text="${loanDetail.book?.title}"></td>
-                                <td th:text="${loanDetail.user?.name}"></td>
-                                <td th:text="${#temporals.format(loanDetail.loan.loanDate, 'yyyy/MM/dd')}"></td>
-                                <td th:text="${#temporals.format(loanDetail.loan.dueDate, 'yyyy/MM/dd')}"></td>
-                                <td th:text="${loanDetail.loan.returnDate != null ? #temporals.format(loanDetail.loan.returnDate, 'yyyy/MM/dd') : '-'}"></td>
+                            <tr th:each="lendDetail : ${lendsWithDetails}">
+                                <td th:text="${lendDetail.lend.id}"></td>
+                                <td th:text="${lendDetail.book?.title}"></td>
+                                <td th:text="${lendDetail.user?.name}"></td>
+                                <td th:text="${#temporals.format(lendDetail.lend.lendDate, 'yyyy/MM/dd')}"></td>
+                                <td th:text="${#temporals.format(lendDetail.lend.dueDate, 'yyyy/MM/dd')}"></td>
+                                <td th:text="${lendDetail.lend.returnDate != null ? #temporals.format(lendDetail.lend.returnDate, 'yyyy/MM/dd') : '-'}"></td>
                                 <td>
-                                    <span th:if="${loanDetail.loan.status == 'ACTIVE'}" class="badge bg-warning">貸出中</span>
-                                    <span th:if="${loanDetail.loan.status == 'RETURNED'}" class="badge bg-success">返却済み</span>
+                                    <span th:if="${lendDetail.lend.status == 'ACTIVE'}" class="badge bg-warning">貸出中</span>
+                                    <span th:if="${lendDetail.lend.status == 'RETURNED'}" class="badge bg-success">返却済み</span>
                                 </td>
                                 <td>
-                                    <form th:if="${loanDetail.loan.status == 'ACTIVE'}" 
-                                          th:action="@{/loans/{id}/return(id=${loanDetail.loan.id})}" 
+                                    <form th:if="${lendDetail.lend.status == 'ACTIVE'}" 
+                                          th:action="@{/lends/{id}/return(id=${lendDetail.lend.id})}" 
                                           method="post" class="d-inline"
                                           onsubmit="return confirm('返却処理を実行しますか？')">
                                         <button type="submit" class="btn btn-sm btn-success">
                                             <i class="bi bi-arrow-left"></i> 返却
                                         </button>
                                     </form>
-                                    <span th:if="${loanDetail.loan.status == 'RETURNED'}" class="text-muted">完了</span>
+                                    <span th:if="${lendDetail.lend.status == 'RETURNED'}" class="text-muted">完了</span>
                                 </td>
                             </tr>
-                            <tr th:if="${loansWithDetails.isEmpty()}">
+                            <tr th:if="${lendsWithDetails.isEmpty()}">
                                 <td colspan="8" class="text-center">貸し出し記録がありません</td>
                             </tr>
                         </tbody>
